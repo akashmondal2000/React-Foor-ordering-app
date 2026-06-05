@@ -18,7 +18,7 @@ const Meals = () => {
     fetchMeals();
   }, []);
 
-  console.log(loadedMeals);
+  // console.log(loadedMeals);
   return (
     <ul id="meals">
       {loadedMeals.map((meal) => (

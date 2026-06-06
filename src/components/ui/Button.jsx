@@ -9,4 +9,4 @@ const Button = ({children, textOnly, className, ...props }) => {
   )
 }
 
-export default Button
+export default Button;

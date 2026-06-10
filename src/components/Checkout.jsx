@@ -30,11 +30,9 @@ const Checkout = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body:JSON.stringify({
-        order: {
-          items: cartCtx.items,
-          customer: customerData,
-        }
+      body: JSON.stringify({
+        items:cartCtx.items,
+        customer:customerData,
       })
     });
   }

@@ -35,12 +35,14 @@ const Checkout = () => {
     userProgressCtx.hideCheckout();
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
+  function handleSubmit(fd) {
+    // event.preventDefault();
 
-    const fd = new FormData(event.target);
+    // const fd = new FormData(event.target);
     /* convert formData object to a sompler js Object*/
-    const customerData = Object.fromEntries(fd.entries());
+    const customerData = Object.fromEntries(fd.entries());  
+    console.log(customerData);
+    
 
     sendRequest(
       JSON.stringify({
@@ -77,7 +79,7 @@ const Checkout = () => {
   }
   return (
     <Modal open={userProgressCtx.progress === "checkout"} onClose={handleClose}>
-      <form onSubmit={handleSubmit}>
+      <form action={handleSubmit}>
         <h2>Checkout</h2>
         <p>Total Amount: {currencyFormater.format(cartTotal)} </p>
         <Input label="Full Name" type="text" id="name" />

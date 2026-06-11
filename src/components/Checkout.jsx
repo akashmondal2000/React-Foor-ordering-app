@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useActionState } from "react";
 import Modal from "./ui/Modal.jsx";
 import CartContext from "../store/cartContext.jsx";
 import { currencyFormater } from "../util/formatter.js";
@@ -21,9 +21,9 @@ const Checkout = () => {
 
   const {
     data,
-    isLoading: isSending,
     error,
     sendRequest,
+    clearData
   } = useHttp('http://localhost:3000/orders', requestConfig);
 
   const cartTotal = cartCtx.items.reduce(
@@ -34,17 +34,21 @@ const Checkout = () => {
   function handleClose() {
     userProgressCtx.hideCheckout();
   }
+  function handleFinish(){
+    userProgressCtx.hideCheckout(); 
+    cartCtx.clearCart();
+    clearData();
+  }
 
-  function handleSubmit(fd) {
+  async function handleSubmit(prevState ,fd) {
     // event.preventDefault();
 
     // const fd = new FormData(event.target);
     /* convert formData object to a sompler js Object*/
     const customerData = Object.fromEntries(fd.entries());  
     console.log(customerData);
-    
 
-    sendRequest(
+   await sendRequest(
       JSON.stringify({
         order:{
           items: cartCtx.items,
@@ -53,6 +57,8 @@ const Checkout = () => {
       }),
     );
   }
+
+  const [formState, formAction, isSending ] = useActionState(handleSubmit, null);
 
   let actions = (
     <>
@@ -68,18 +74,18 @@ const Checkout = () => {
   }
 
   if(data && !error){
-    return <Modal open={userProgressCtx.progress === "checkout"} onClose={handleClose}>
+    return <Modal open={userProgressCtx.progress === "checkout"} onClose={handleFinish}>
       <h2>Sucess</h2>
       <p>Your order was submitted Successfully</p>
       <p>We will get back to you with more details via email within next few minuts</p>
       <p className="modal-actions">
-        <Button onClick={handleClose}>Okey</Button>
+        <Button onClick={handleFinish}>Okey</Button>
       </p>
     </Modal>
   }
   return (
     <Modal open={userProgressCtx.progress === "checkout"} onClose={handleClose}>
-      <form action={handleSubmit}>
+      <form action={formAction}>
         <h2>Checkout</h2>
         <p>Total Amount: {currencyFormater.format(cartTotal)} </p>
         <Input label="Full Name" type="text" id="name" />
